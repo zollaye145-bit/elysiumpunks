@@ -32,6 +32,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{background:var(--paper)}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--display);font-stretch:100%;font-size:16px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -166,8 +167,7 @@ footer{padding-block:28px;display:flex;justify-content:space-between;gap:16px;fl
   .hero,.quest-grid{grid-template-columns:minmax(0,1fr)}
   .hero-copy{padding-bottom:8px}
   .stage{order:-1;max-width:380px;width:100%;margin:0 auto}
-  .wall{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .wall .tile:nth-child(n+9){display:none}
+  .wall{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media (max-width:560px){
   .hide-sm{display:none}
@@ -175,7 +175,6 @@ footer{padding-block:28px;display:flex;justify-content:space-between;gap:16px;fl
   .stats div:nth-child(2){border-right:0}
   .stats div:nth-child(-n+2){border-bottom:2px solid var(--ink)}
   .wall{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .wall .tile:nth-child(9){display:block}
   .logo{font-size:16px;white-space:nowrap}
   nav .btn{padding:9px 12px;white-space:nowrap}
   .task{grid-template-columns:40px minmax(0,1fr)}
@@ -345,10 +344,10 @@ Promise.all(PUNKS.map(loadImg)).then(imgs=>{
 function buildWall(P){
   const bgs=["#3db5e0"];
   const wall=$("#wall"); const ids=[];
-  for(let i=0;i<12;i++){ let n; do{ n=Math.floor(Math.random()*10000)+1 }while(ids.includes(n)); ids.push(n); }
+  for(let i=0;i<P.length;i++){ let n; do{ n=Math.floor(Math.random()*10000)+1 }while(ids.includes(n)); ids.push(n); }
   ids.forEach((n,i)=>{
     const t=document.createElement("div"); t.className="tile"; const c=document.createElement("canvas");
-    const px=P[(i*5)%P.length], bg=bgs[(i*3)%bgs.length]; paint(c,px,bg);
+    const px=P[i], bg=bgs[(i*3)%bgs.length]; paint(c,px,bg);
     t.appendChild(c); t.insertAdjacentHTML("beforeend",`<span class="n">#${String(n).padStart(4,"0")}</span>`);
     t.addEventListener("pointerenter",()=>{ if(!reduce) glitch(c,px,bg); });
     wall.appendChild(t);
@@ -459,7 +458,7 @@ form.addEventListener("submit",async e=>{
         body:JSON.stringify({wallet,twitter:handle,follow:state.follow,like:state.like,retweet:state.rt,ts:new Date().toISOString()})});
     } else await new Promise(r=>setTimeout(r,800));
     Object.assign(state,{done:true,wallet,handle,n:Math.floor(Math.random()*P_len())}); store.set("state",state);
-    render(); showPass(); burst($("#passSlot"),90); loadCount();
+    btn.textContent="Submitted ✓"; render(); showPass(); burst($("#passSlot"),90); loadCount();
   }catch(e2){ btn.disabled=false; btn.textContent="Lock my whitelist spot"; err.textContent="Couldn't reach the whitelist. Check your connection and try again."; }
 });
 function P_len(){ return (window.__P||PUNKS).length; }
